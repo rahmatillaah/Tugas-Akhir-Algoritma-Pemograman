@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_ATTEMPTS 3 // Jumlah maksimal percobaan
+
+int pin = 1234; // PIN default
+float saldo = 1000; // Saldo awal
+
+// Fungsi untuk membersihkan layar
+void clearScreen() {
+    system("cls");
+}
+
+// Fungsi untuk menampilkan menu ATM
+void displayMenu() {
+    printf("\n==== MENU ATM ====\n");
+    printf("1. Masukkan PIN\n");
+    printf("2. Tarik Tunai\n");
+    printf("3. Cek Saldo\n");
+    printf("4. Setor Tunai\n");
+    printf("5. Transfer\n");
+    printf("6. Keluar\n");
+    printf("==================\n");
+}
+
+// Fungsi untuk memeriksa PIN
+bool checkPIN(int inputPIN) {
+    return inputPIN == pin;
+}
+
+// Fungsi untuk menarik tunai
+void tarikTunai(float jumlah) {
+    if (jumlah > saldo) {
+        printf("Maaf, saldo tidak mencukupi.\n");
+    } else {
+        saldo -= jumlah;
+        printf("Anda telah menarik tunai sebesar %.2f\n", jumlah);
+    }
+}
+
+// Fungsi untuk mengecek saldo
+void cekSaldo() {
+    printf("Saldo Anda: %.2f\n", saldo);
+}
+
+// Fungsi untuk setor tunai
+void setorTunai(float jumlah) {
+    saldo += jumlah;
+    printf("Anda telah melakukan setor tunai sebesar %.2f\n", jumlah);
+}
+
+// Fungsi untuk mentransfer saldo
+void transfer(float jumlah) {
+    if (jumlah > saldo) {
+        printf("Maaf, saldo tidak mencukupi.\n");
+    } else {
+        saldo -= jumlah;
+        printf("Transfer sebesar %.2f berhasil.\n", jumlah);
+    }
+}
+
+int main() {
+    int pilihan;
+    int inputPIN;
+    float jumlah;
+
+    bool isPINValid = false;
+    int attempts = 0;
+
+    do {
+        clearScreen(); // Membersihkan layar
+        displayMenu();
+        printf("Masukkan pilihan Anda: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1:
+                attempts = 0; // Set ulang jumlah percobaan
+                do {
+                    printf("Masukkan PIN Anda: ");
+                    scanf("%d", &inputPIN);
+                    isPINValid = checkPIN(inputPIN);
+                    attempts++;
+                    if (!isPINValid) {
+                        printf("PIN salah. Percobaan ke-%d dari %d.\n", attempts, MAX_ATTEMPTS);
+                        if (attempts >= MAX_ATTEMPTS) {
+                            printf("Anda telah melebihi jumlah maksimal percobaan. Silakan coba lagi nanti.\n");
+                            exit(0); // Keluar dari program
+                        }
+                    }
+                } while (!isPINValid && attempts < MAX_ATTEMPTS);
+                break;
+            case 2:
+                if (!isPINValid) {
+                    printf("Anda harus memasukkan PIN terlebih dahulu.\n");
+                } else {
+                    printf("Masukkan jumlah yang ingin ditarik: ");
+                    scanf("%f", &jumlah);
+                    tarikTunai(jumlah);
+                }
+                break;
+            case 3:
+                if (!isPINValid) {
+                    printf("Anda harus memasukkan PIN terlebih dahulu.\n");
+                } else {
+                    cekSaldo();
+                }
+                break;
+            case 4:
+                if (!isPINValid) {
+                    printf("Anda harus memasukkan PIN terlebih dahulu.\n");
+                } else {
+                    printf("Masukkan jumlah yang ingin disetor: ");
+                    scanf("%f", &jumlah);
+                    setorTunai(jumlah);
+                }
+                break;
+            case 5:
+                if (!isPINValid) {
+                    printf("Anda harus memasukkan PIN terlebih dahulu.\n");
+                } else {
+                    printf("Masukkan jumlah yang ingin ditransfer: ");
+                    scanf("%f", &jumlah);
+                    transfer(jumlah);
+                }
+                break;
+            case 6:
+                printf("Terima kasih telah menggunakan layanan ATM.\n");
+                break;
+            default:
+                printf("Pilihan tidak valid. Silakan pilih lagi.\n");
+        }
+        printf("Tekan tombol apapun untuk melanjutkan...");
+        getchar();
+        getchar(); // Menunggu input tombol
+    } while (pilihan != 6);
+
+    return 0;
+}
+// NAMA : Rafah Rahmatillaah
+// NIM : 12250520349
